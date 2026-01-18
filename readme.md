@@ -183,8 +183,8 @@ All architectural decisions — including **model selection, quantization, chunk
 ## 📦 Installation
 ### 1️⃣ Clone Repository
 ```bash
-git clone https://github.com/yourusername/project-nova.git
-cd project-nova
+git clone https://github.com/Navjot-Singh7/Project-Nova.git
+cd Project Nova
 ```
 ### 2️⃣ Create Virtual Environment
 ```bash
