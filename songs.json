@@ -1,0 +1,108 @@
+{
+  "songs": [
+    {
+      "url": "https://youtu.be/be3hbNjjDaY?si=BfAZBaT_qmWfeFu9",
+      "aliases": ["calm", "lofi"]
+    },
+    {
+      "url": "https://youtu.be/qdpXxGPqW-Y?si=S9nFyp1dtlvpNGi_",
+      "aliases": ["night", "edm"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=-DPOPsDw2Y4&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=3&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["edm"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=zFT3f9biz68&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=7&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["bts", "pop"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=_XeE2aEiPHk&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=17&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["jap", "anime"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=_swP5sJvSR4&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=22&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["night", "chill"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=tDY2aBp3PO4&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=29&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["chill"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=mgT0N3tMP74&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=36&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["old", "classic"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=EieUsaKgbsU&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=39&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["kpop", "sad"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=32AwztQjcVg&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=51&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["kpop", "free"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=G3EwNrcx6_A&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=64&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["night", "dreamy"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=hc0pRgvtpuw&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=68&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["bts", "uplifting"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=-qsnDCsRCRU&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=72&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["anime", "love"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Pnb6mWLvyso&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=77&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["anime", "summer"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=G6SDtCHi1gU&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=90&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["rap", "pop"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=VzTJ8Ih5xRw&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=99&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["night", "uplifting"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=cNGjD0VG4R8&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=113&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["night", "love"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=rfTgO9rpqck&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=100&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["summer", "lofi"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=1QYBiNRu1ok&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=19&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["bts", "kpop"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=I9Wqm1W5-4s&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=32&pp=gAQBiAQB8AUB0gcJCU8KAYcqIYzvsAgC",
+      "aliases": ["slow", "night"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=0M1UCYRZAtM&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=82&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["summer", "soothing"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=zu0bsnXOpFQ&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=121&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["sad", "calm"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=xyBaqmJM8sA&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=136&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["uplifting", "calm"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=GZjt_sA2eso&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=148&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["bts", "calm"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=gdZLi9oWNZg&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=163&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["uplifting", "bts"]
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=0tWU94w_3ig&list=PL8War78O4dcmylIg3gNvZrt1gOUKjzDHx&index=134&pp=gAQBiAQB8AUBsAgC",
+      "aliases": ["love", "bts"]
+    }
+  ]
+}

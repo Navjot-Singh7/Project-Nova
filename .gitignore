@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+whisper_kani_env/
+.venv/
+
+# Memory & data
+waifu_memories/
+*.db
+
+# Audio files
+*.wav
+*.mp3
+
+
+fine-tune-dataset.jsonl
+light_tts.py
+llm.py
+model_listener.py
+speech.py
+text_to_speech.py
