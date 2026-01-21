@@ -14,7 +14,7 @@ waifu_memories/
 # Audio files
 *.wav
 *.mp3
-
+*.ogg
 
 fine-tune-dataset.jsonl
 light_tts.py
