@@ -591,10 +591,14 @@ def record_audio():
 def transcribe_audio():
     segments, info = model.transcribe("temp_audio.wav", beam_size=5)
     segments = list(segments) 
-    if segments[0].text != "":
-        print(f"Transcription : {segments[0].text}")
-        get_response(segments[0].text)
-    else:
+    try:
+        if segments[0].text != "":
+            print(f"Transcription : {segments[0].text}")
+            get_response(segments[0].text)
+        else:
+            check_to_speak()
+    except Exception as e:
+        print("No audio captured.")
         check_to_speak()
 
 def check_to_speak():
@@ -677,7 +681,11 @@ def check_chat_or_voice():
     msg = (
         "Press 1 to enter chat mode.\nOR\nPress 2 to use voice mode.\n"
     )
-    input_mode = input(msg).strip().lower()
+    try:
+        input_mode = input(msg).strip().lower()
+    except KeyboardInterrupt:
+        print("Exiting...")
+        return
     if input_mode == '1':
         print("Entering chat mode...")
         print("Type exit or bye to quit chat mode.")
