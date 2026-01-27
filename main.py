@@ -332,7 +332,7 @@ def get_relevant_memories(user_input):
             found_mems = ''
             for doc in results['documents'][0]:
                 found_mems += f"\n{doc}"
-            print(f"Found: {found_mems}")
+            #print(f"Found: {found_mems}")
             return f"{found_mems}"
             
     return ""
@@ -593,7 +593,7 @@ def transcribe_audio():
     segments = list(segments) 
     try:
         if segments[0].text != "":
-            print(f"Transcription : {segments[0].text}")
+            print(f"You : {segments[0].text}")
             get_response(segments[0].text)
         else:
             check_to_speak()
