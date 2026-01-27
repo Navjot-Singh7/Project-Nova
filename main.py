@@ -1,3 +1,11 @@
+import os
+# Set offline mode BEFORE any other imports
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["HF_DATASETS_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+
 from faster_whisper import WhisperModel
 from ollama import chat
 import json
@@ -17,10 +25,11 @@ import soundfile as sf
 import idle_animation
 import librosa
 import numpy as np
-import logging
 from queue import Queue
 import random
 import pygetwindow as gw
+warnings.filterwarnings("ignore")
+import logging
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
 from colorama import Fore, Style, init
 
@@ -61,16 +70,10 @@ def pause_for_chunk(chunk: str) -> float:
     pause += min(len(chunk) / 120, 1.0) * 0.05
     return pause
 
-warnings.filterwarnings("ignore")
-import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
-os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 from soprano import SopranoTTS
+#print("initializing tts")
+tts = SopranoTTS(backend="auto", device='cuda', cache_size_mb=100, decoder_batch_size=1)
+#print("done")
 
 EMOTION_PRESETS = {
     "neutral": {
@@ -234,7 +237,7 @@ if start_up_memories:
 print("""Loading Model.. 
 ------------------------------------------------------------""")
 model = None
-tts = SopranoTTS(backend="auto", device='cuda', cache_size_mb=100, decoder_batch_size=1)
+#tts = SopranoTTS(backend="auto", device='cuda', cache_size_mb=100, decoder_batch_size=1)
 print(Fore.MAGENTA + Style.BRIGHT + r"""
 ███╗   ██╗ ██████╗ ██╗   ██╗ █████╗ 
 ████╗  ██║██╔═══██╗██║   ██║██╔══██╗
