@@ -420,6 +420,7 @@ def clean_text_for_tts(text: str) -> str:
     text = re.sub(r"…+", ",", text)
 
     text = re.sub(r"\bI\s*,?\s*I['’]ll\b", "I will", text)
+    text = text.replace("uhm", "umm")
 
     text = re.sub(r"\b(uh+|um+|eh+|ah+|huh+)\b", "", text, flags=re.IGNORECASE)
 
