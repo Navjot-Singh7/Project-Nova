@@ -576,8 +576,8 @@ def record_audio():
         recognizer.adjust_for_ambient_noise(source)
 
         while keyboard.is_pressed("shift"):
-            print("Listening...")
             try:
+                print("Listening...")
                 audio_data = recognizer.listen(source)
                 record = True
             except Exception as e:
