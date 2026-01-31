@@ -328,7 +328,7 @@ def get_datetime_in_words():
     return f"{date_str}, {time_str}"
 
 def get_relevant_memories(user_input):
-    triggers = ["recall", "remember when", "what did I say", "earlier you said", "previously", "history of", "do you remember", "i told you before", "you do remember","did you remember", "i told you", "remember i told you"]
+    triggers = ["recall", "remember when", "what did I say", "earlier you said", "previously", "history of", "do you remember", "do you even remember", "i told you before", "you do remember","did you remember", "i told you", "remember i told you"]
     if any(trigger in user_input.lower() for trigger in triggers):
         results = collection.query(query_texts=[user_input], n_results=2, )
         if results['documents'] and results['documents'][0]:
@@ -347,7 +347,7 @@ def save_to_memory(user_in, ai_out):
   if LAST_MEMORY_TIME and (now - LAST_MEMORY_TIME).seconds < 70:
     return
   
-  triggers = ["remember this", "don't forget", "note this", "memorize this", "store this", "keep this in mind","keep that in mind", "make sure you remember", "make sure to remember"]
+  triggers = ["remember this", "don't forget", "note this", "note that", "memorize this", "store this", "keep this in mind","keep that in mind", "make sure you remember", "make sure to remember"]
   ai_trigger = ["i will remember", "i'll keep in mind", "i will remember this always", "i won't forget", "i won't forget this moment", "it's in my heart", "i'll remember this always", "don't worry i won't forget", "i'm glad you told me this", "that must have been hard", "i will never forget", "i will not forget", "i won't ever forget", "i will never ever forget"]
   emotional_user_signals = ["scared", "sad", "lonely", "afraid", "worried", "hurt", "cry", "panic", "depressed", "anxious", "nervous", "upset", "frightened", "terrified", "distressed"]
   
