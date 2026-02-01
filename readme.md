@@ -6,6 +6,15 @@
 It combines a fine-tuned large language model, long-term memory, expressive text-to-speech, speech recognition, and live 3D avatar control — all optimized to run on consumer hardware.
 
 ---
+>### 🔔 Updates
+>### v0.1 — Discord Integration (Latest)
+>- Added **Discord bot support** to chat with Nova remotely
+>- Uses the same **LLM, memory, and personality** system
+>- Secure token handling via **`.env`** (not committed)
+>- Can run alongside the **local voice/avatar version**
+- #### Scroll below to see the instructions for setting up Nova as a Discord Bot. 
+
+---
 > ⚠️ **Development Disclaimer**
 >
 > Project Nova was **not created using “vibe coding” or fully AI-generated code**.
@@ -252,6 +261,41 @@ Stored locally in:
 - **Works offline:** After models are downloaded.
 - **Privacy:** No Data is sent to any cloud servers
 ---
+
+## 💬 Discord Integration (Optional)
+
+Project Nova can also be accessed via a **Discord bot interface**, allowing you to chat with Nova remotely while preserving her personality and memory system.
+
+### Features
+- Text-based conversation with Nova on Discord
+- Uses the **same LLM and memory system** as the local companion
+- Supports long-term memory and contextual responses
+- Can run alongside the local voice/avatar version or independently
+
+> The Discord bot is an optional interface.  
+> Nova’s core intelligence remains fully local.
+---
+### 🛠️ Discord Bot Setup
+
+1. Create a Discord application:
+   - Go to https://discord.com/developers/applications
+   - Create a new application
+   - Add a **Bot** and copy the bot token
+
+2. Create a `.env` file in the project root:
+```bash
+DISCORD_BOT_TOKEN="<your_bot_token_here>"
+```
+3. Invite the bot to your server using the OAuth2 URL from the Developer Portal.
+4. Install Discord dependencies
+```
+pip install discord.py python-dotenv
+```
+5. Run the Discord bot script
+```
+python bot.py
+```
+
 ### ⚠️ Disclaimer
 Project Nova is an experimental AI companion project intended for:
 - Learning

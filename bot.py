@@ -10,7 +10,6 @@ import chromadb
 from chromadb.utils import embedding_functions
 import datetime
 from num2words import num2words
-from colorama import Fore, Style, init
 
 load_dotenv()
 discord_token = os.getenv("DISCORD_BOT_TOKEN")
@@ -168,7 +167,7 @@ def get_response(user_input):
         output = chat(model='ai-vtuber', messages=chat_history, format=waifu_schema, options={"temperature": 0.7})
     try:
         response_data = json.loads(output.message.content)
-        color_print(f"AI : {response_data['response']}" , Fore.LIGHTMAGENTA_EX)
+        print(f"AI : {response_data['response']}")
         chat_history.append({"role": "assistant", "content": output.message.content})
         threading.Thread(target=save_to_memory, args=(user_input, response_data["response"]), daemon=True).start()
         return response_data['response']
@@ -176,9 +175,6 @@ def get_response(user_input):
     except json.JSONDecodeError:
         print("AI(fallback) :", output.message.content)
         chat_history.append({"role": "assistant", "content": output.message.content})
-
-def color_print(text, color=Fore.CYAN):
-    print(color + text)
 
 @bot.event
 async def on_ready():
