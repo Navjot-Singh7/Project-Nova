@@ -167,7 +167,7 @@ def get_response(user_input):
         output = chat(model='ai-vtuber', messages=chat_history, format=waifu_schema, options={"temperature": 0.7})
     try:
         response_data = json.loads(output.message.content)
-        print(f"AI : {response_data['response']}")
+        print(f"AI : {response_data}")
         chat_history.append({"role": "assistant", "content": output.message.content})
         threading.Thread(target=save_to_memory, args=(user_input, response_data["response"]), daemon=True).start()
         return response_data['response']
