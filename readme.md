@@ -183,7 +183,7 @@ All architectural decisions — including **model selection, quantization, chunk
 ### Software
 - Windows (recommended)
 - [Ollama](https://ollama.com/)
-- [Python 3.10+](https://www.python.org/downloads/)
+- [Python 3.11](https://www.python.org/downloads/) (recommended)
 - [CUDA Toolkit: (12.x or newer)](https://developer.nvidia.com/cuda-downloads)
 - NVIDIA Drivers
 - [VSeeFace](https://www.vseeface.icu/#download)
