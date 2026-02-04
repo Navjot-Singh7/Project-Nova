@@ -197,8 +197,9 @@ cd Project Nova
 ```
 ### 2️⃣ Create Virtual Environment
 ```bash
-python -m venv env
-env\Scripts\activate
+py -3.11 -m venv my_env
+
+my_env\Scripts\activate
 ```
 ### 3️⃣ Install PyTorch (Required)
 #### Example for NVIDIA GPU (CUDA 12.6):
