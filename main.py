@@ -575,10 +575,10 @@ def record_audio():
     record = False
     with mic as source:
         recognizer.adjust_for_ambient_noise(source)
+        print("Listening...")
 
         while keyboard.is_pressed("shift"):
             try:
-                print("Listening...")
                 audio_data = recognizer.listen(source)
                 record = True
             except Exception as e:
