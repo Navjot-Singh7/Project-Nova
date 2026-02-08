@@ -201,14 +201,14 @@ py -3.11 -m venv my_env
 
 my_env\Scripts\activate
 ```
-### 3️⃣ Install PyTorch (Required)
+### 3️⃣ Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4️⃣ Install PyTorch (Required)
 #### Example for NVIDIA GPU (CUDA 12.6):
 ```bash
 pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu126
-```
-### 4️⃣ Install Dependencies
-```bash
-pip install -r requirements.txt
 ```
 ### 5️⃣ Install Model directly from HuggingFace to your downloads folder (Recommended)
 https://huggingface.co/Navpy/phi-3.5-AI-Vtuber-json/tree/main
