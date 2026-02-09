@@ -185,8 +185,12 @@ async def on_message(msg):
     if msg.author == bot.user:
         return
 
-    print(f"Message recieved : {msg.content}")
-    reply = get_response(msg.content)
+    #print(f"Message recieved : {msg.content}")
+    prompt = f"{msg.author.name} said on discord: {msg.content}"
+    print(prompt)
+    reply = get_response(prompt)
+    #reply = f"{msg.author.name} said on discord: {reply}"
+    #print(reply)
     await msg.channel.send(reply)
 
 bot.run(discord_token)
