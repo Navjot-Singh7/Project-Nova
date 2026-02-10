@@ -232,9 +232,19 @@ ollama list
 ```bash
 ollama pull nomic-embed-text
 ```
-### 🔟 Run the main Script
+### 🔟 Run the main Script noramally
 ```bash
 python main.py
+```
+#### By default, Project Nova runs in **online mode** to allow automatic downloading of required models (STT, TTS).Once all models are downloaded, you can run Nova fully offline, By setting these environment variables at the top of your code before importing anything.
+```bash
+import os
+# Set offline mode BEFORE any other imports
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["HF_DATASETS_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 ```
 ---
 ### 🎙️ Audio Setup
