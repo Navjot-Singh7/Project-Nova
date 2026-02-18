@@ -412,7 +412,7 @@ def get_response(user_input):
             f"---------------------\n"
             f"{get_datetime_in_words()} - Master said: {user_input}"
         )
-        print(vision_input)
+        #print(vision_input)
         chat_history.append({"role": "user", "content": vision_input})
     else:
         chat_history.append({"role": "user", "content": f"{get_datetime_in_words()} - {user_input}"})
