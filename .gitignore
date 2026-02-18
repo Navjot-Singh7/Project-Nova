@@ -24,3 +24,7 @@ llm.py
 model_listener.py
 speech.py
 text_to_speech.py
+vision.py
+
+#models/
+*.mf

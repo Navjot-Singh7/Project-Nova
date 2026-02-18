@@ -1,11 +1,5 @@
 import os
-
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
-os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-
+import torch
 from faster_whisper import WhisperModel
 from ollama import chat
 import json
@@ -28,6 +22,11 @@ import numpy as np
 from queue import Queue
 import random
 import pygetwindow as gw
+from PIL import Image
+from transformers import AutoProcessor, AutoModelForVision2Seq
+from transformers.image_utils import load_image
+import cv2
+import gc
 warnings.filterwarnings("ignore")
 import logging
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
@@ -74,6 +73,25 @@ from soprano import SopranoTTS
 #print("initializing tts")
 tts = SopranoTTS(backend="auto", device='cuda', cache_size_mb=100, decoder_batch_size=1)
 #print("done")
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Initialize processor and model
+processor = AutoProcessor.from_pretrained("HuggingFaceTB/SmolVLM-256M-Instruct")
+vision_model = AutoModelForVision2Seq.from_pretrained(
+    "HuggingFaceTB/SmolVLM-256M-Instruct",
+    torch_dtype=torch.bfloat16,
+)
+vision_model.to("cpu")
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "image"},
+            {"type": "text", "text": "Describe the main contents of this Image briefly. Don't overly describe the background. Focus on the main subjects and objects in the image."}
+        ]
+    },
+]
 
 EMOTION_PRESETS = {
     "neutral": {
@@ -237,7 +255,7 @@ if start_up_memories:
 print("""Loading Model.. 
 ------------------------------------------------------------""")
 model = None
-#tts = SopranoTTS(backend="auto", device='cuda', cache_size_mb=100, decoder_batch_size=1)
+
 print(Fore.MAGENTA + Style.BRIGHT + r"""
 ███╗   ██╗ ██████╗ ██╗   ██╗ █████╗ 
 ████╗  ██║██╔═══██╗██║   ██║██╔══██╗
@@ -325,10 +343,10 @@ def get_datetime_in_words():
     am_pm = "am" if now.hour < 12 else "pm"
     time_str = f"at {hour_word} {minute_word} {am_pm}"
     
-    return f"{date_str}, {time_str}"
+    return f"ON {date_str}, {time_str}"
 
 def get_relevant_memories(user_input):
-    triggers = ["recall", "remember when", "what did I say", "earlier you said", "previously", "history of", "do you remember", "do you even remember", "i told you before", "you do remember","did you remember", "i told you", "remember i told you"]
+    triggers = ["recall", "remember when", "what did I say", "earlier you said", "previously", "history of", "do you remember", "do you even remember", "i told you before", "i have told you before", "you do remember","did you remember", "i told you", "remember i told you"]
     if any(trigger in user_input.lower() for trigger in triggers):
         results = collection.query(query_texts=[user_input], n_results=2, )
         if results['documents'] and results['documents'][0]:
@@ -377,6 +395,7 @@ def save_to_memory(user_in, ai_out):
 
 def get_response(user_input):
     memories = get_relevant_memories(user_input)
+    vision_description = start_vision(user_input)
     if memories:
         contextual_input = (
             f"--- MEMORY RETRIEVAL ---\n"
@@ -386,6 +405,15 @@ def get_response(user_input):
         )
         #print(contextual_input)
         chat_history.append({"role": "user", "content": contextual_input})
+    elif vision_description:
+        vision_input = (
+            f"--- This is the visual details you are seeing right now, use this information in your response ---\n"
+            f"{vision_description}\n"
+            f"---------------------\n"
+            f"{get_datetime_in_words()} - Master said: {user_input}"
+        )
+        print(vision_input)
+        chat_history.append({"role": "user", "content": vision_input})
     else:
         chat_history.append({"role": "user", "content": f"{get_datetime_in_words()} - {user_input}"})
     if len(chat_history) > 21:
@@ -570,6 +598,61 @@ def start_tts(text, emotion):
 
     generation_thread.join()
     streaming_thread.join()
+
+def start_vision(user_input):
+    global vision_model
+    vision_triggers = ["look at", "what do you see", "can you see", "see this", "check out", "checkout", "seeing"]
+    voice_lines = [
+    {"text": "Hold on, let me put my glasses on so I can see you clearly!", "emotion": "cute_playful"},
+    {"text": "Ooh, are you showing me something? Give me a second to focus my eyes!", "emotion": "cute_playful"},
+    {"text": "Stay right there, don't move! I’m opening my camera feed now.", "emotion": "excited"},
+    {"text": "One moment... I need to concentrate to see what's in front of me.", "emotion": "neutral"},
+    {"text": "Wait, let me fix my hair... okay, just kidding! Scanning now.", "emotion": "cute_playful"},
+    {"text": "Diverting power to optical sensors... calibration in progress.", "emotion": "neutral"},
+    {"text": "Accessing the webcam buffer. Please maintain position for the scan.", "emotion": "neutral"},
+    {"text": "Initializing vision module. My processors are a bit busy, but I've got this!", "emotion": "excited"},
+    {"text": "Parsing visual data stream... one moment, I'm almost through the firewall.", "emotion": "neutral"},
+    {"text": "Running image-to-text distillation. Stand by for environmental analysis.", "emotion": "neutral"},
+    {"text": "You want my opinion? Alright, let me get a good look at you first.", "emotion": "flirty"},
+    {"text": "Scanning... I hope you're showing me something cool!", "emotion": "excited"},
+    {"text": "Checking the scene... hmmm, let's see what you're up to today.", "emotion": "cute_playful"},
+    {"text": "Wait, let me clear my cache—okay, eyes are open. What have we got here?", "emotion": "cute_playful"},
+    {"text": "Got it. Let me take a look real quick.", "emotion": "excited"},
+    {"text": "Scanning now... stay still.", "emotion": "neutral"},
+    {"text": "Opening my eyes... one second.", "emotion": "neutral"},
+    {"text": "Analyzing the view... give me a moment.", "emotion": "neutral"},
+    {"text": "Let me see... hold that thought!", "emotion": "cute_playful"}
+]
+
+    if any(trigger in user_input.lower() for trigger in vision_triggers):
+        voice_line = random.choice(voice_lines)
+        threading.Thread(target=start_tts, args=(voice_line["text"], voice_line["emotion"]), daemon=True).start()
+        vision_model.to(DEVICE)
+        cam = cv2.VideoCapture(0)
+
+        # Capture one frame
+        ret, frame = cam.read()
+        cam.release()
+
+        if ret:
+            color_converted = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(color_converted)
+            prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
+            
+            inputs = processor(text=prompt, images=[pil_image], return_tensors="pt")
+            inputs = inputs.to(DEVICE)
+            
+            generated_ids = vision_model.generate(**inputs, max_new_tokens=110, do_sample=False, repetition_penalty=1.1)
+            generated_texts = processor.batch_decode(
+                                    generated_ids,
+                         skip_special_tokens=True,)
+            vision_model.to("cpu")
+            torch.cuda.empty_cache()
+            gc.collect()
+            return generated_texts[0].split("Assistant:")[1]
+        else:
+            print("Failed to capture image.")
+
 
 def record_audio():
     record = False

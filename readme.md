@@ -7,6 +7,17 @@ It combines a fine-tuned large language model, long-term memory, expressive text
 
 ---
 >### 🔔 Updates
+>### v0.2 — Multimodal Capabilities (Project Nova Vision) (Latest)
+>- Project Nova is now a **Multimodal AI Agent**. Using a custom-engineered pipeline, Nova can "see" her environment and react in real-time while maintaining her 3D persona.
+>### 🛠️ Technical Architecture
+>- To fit a vision-language model (VLM) alongside a fine-tuned LLM on a limited **4GB RTX 2050**, I implemented a **Sequential Model Offloading** strategy:
+
+> 1. **Intent Trigger:** A keyword-based heuristic (e.g., "Look at this") triggers the vision sequence.
+> 2. **Resource Swapping:** To prevent OOM (Out of Memory) crashes, the system dynamically swaps models between System RAM and GPU VRAM.
+> 3. **Visual Injection:** The resulting image description is injected into Nova's context as **Internal Sensory Data**, allowing her to react naturally without breaking character.
+
+>#### Models Used
+>- **Vision:** `SmolVLM-256M` (Quantized for edge-level performance).
 >### v0.1 — Discord Integration (Latest)
 >- Added **Discord bot support** to chat with Nova remotely
 >- Uses the same **LLM, memory, and personality** system
