@@ -229,7 +229,7 @@ https://huggingface.co/Navpy/phi-3.5-AI-Vtuber-json/tree/main
 # make sure it is inside quotes
 FROM "<YOUR_MODEL_FILE_PATH>"
 ```
-### 7️⃣ Create the Model - open your terminal in the folder where you have cloned the repository and run this command
+### 7️⃣ Create the Model - open your terminal in the Project-Nova folder and run this command
 ```bash
 # Make sure you have ollama installed in your computer
 ollama create ai-vtuber -f assistant_modelfile/Modelfile
@@ -243,7 +243,7 @@ ollama list
 ```bash
 ollama pull nomic-embed-text
 ```
-### 🔟 Run the main Script noramally
+### 🔟 Run the main Script normally
 ```bash
 python main.py
 ```
