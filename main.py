@@ -407,7 +407,8 @@ def get_response(user_input):
         chat_history.append({"role": "user", "content": contextual_input})
     elif vision_description:
         vision_input = (
-            f"--- This is the visual details you are seeing right now, use this information in your response ---\n"
+            f"--- This is the visual details you are seeing right now, please use this information in your response ---\n"
+            f"---------------------\n"
             f"{vision_description}\n"
             f"---------------------\n"
             f"{get_datetime_in_words()} - Master said: {user_input}"
