@@ -709,11 +709,11 @@ def play_song(user_in):
     with open("songs.json", "r") as f:
         data = json.loads(f.read())
 
-        if ("play" in user_in.lower() and "song" in user_in.lower()) or ("listen" in user_in.lower() and "some songs" in user_in.lower()) or ("listen" in user_in.lower() and "a song" in user_in.lower()) or ("listen" in user_in.lower() and "some music" in user_in.lower()) or ("play" in user_in.lower() and "music" in user_in.lower()) or "any song" in user_in.lower() or ("start" in user_in.lower() and "music" in user_in.lower()) or ("start" in user_in.lower() and "song" in user_in.lower()):
+        if ("play" in user_in.lower() and "song" in user_in.lower()) or ("listen" in user_in.lower() and "song" in user_in.lower()) or ("listen" in user_in.lower() and "some songs" in user_in.lower()) or ("listen" in user_in.lower() and "a song" in user_in.lower()) or ("listen" in user_in.lower() and "some music" in user_in.lower()) or ("play" in user_in.lower() and "music" in user_in.lower()) or "any song" in user_in.lower() or ("start" in user_in.lower() and "music" in user_in.lower()) or ("start" in user_in.lower() and "song" in user_in.lower()):
 
             specific_songs = []
             for song in data["songs"]:
-                if any(alias.lower() in user_in.lower() for alias in song["aliases"]):
+                if any(alias.lower() in user_in.lower() for alias in song["aliases"]): 
                     specific_songs.append(song["url"])
             if specific_songs:
                 webbrowser.open(random.choice(specific_songs))
