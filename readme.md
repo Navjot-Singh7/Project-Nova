@@ -7,7 +7,12 @@ It combines a fine-tuned large language model, long-term memory, expressive text
 
 ---
 >### 🔔 Updates
->### v0.2 — Multimodal Capabilities (Project Nova Vision) (Latest)
+>### v0.3 — Nova V2 (Latest)
+> - Nova's model has been completely re-trained from the ground up to be more stable, expressive, and structurally sound.
+> - While V1 was successfully fine-tuned to repond in JSON format, it required a System Prompt to guide the model for that behavior. V2 has been deeply trained (455 steps, 0.39 loss) to make JSON and the personality its native language. It now understands the JSON structure at a foundational level, making it more **'alive,'** and **'emotionally expressive'**.
+> - **Download** the new version from Huggingface - https://huggingface.co/Navpy/phi-3.5-AI-Vtuber-json
+> - For **Ollama** users use the Modelfile which is inside **assistant_modelfile/** folder to get the best results out of the model **(RECOMMENDED)**.
+>### v0.2 — Multimodal Capabilities (Project Nova Vision)
 >- Project Nova is now a **Multimodal AI Agent**. Using a custom-engineered pipeline, Nova can "see" her environment and react in real-time while maintaining her 3D persona.
 >### 🛠️ Technical Architecture
 >- To fit a vision-language model (VLM) alongside a fine-tuned LLM on a limited **4GB RTX 2050**, I implemented a **Sequential Model Offloading** strategy:
@@ -232,7 +237,7 @@ FROM "<YOUR_MODEL_FILE_PATH>"
 ### 7️⃣ Create the Model - open your terminal in the Project-Nova folder and run this command
 ```bash
 # Make sure you have ollama installed in your computer
-ollama create ai-vtuber -f assistant_modelfile/Modelfile
+ollama create nova -f assistant_modelfile/Modelfile
 ```
 ### 8️⃣ Check if the model is created or not
 **Note** - You'll see your model name in the terminal
