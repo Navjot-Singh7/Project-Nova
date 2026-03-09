@@ -162,9 +162,9 @@ def get_response(user_input):
 
         if messages[0]["role"] != "system":
             messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
-        output = chat(model='ai-vtuber', messages=messages, format=waifu_schema, options={"temperature": 0.7})
+        output = chat(model='nova', messages=messages, format=waifu_schema, options={"temperature": 0.7})
     else:
-        output = chat(model='ai-vtuber', messages=chat_history, format=waifu_schema, options={"temperature": 0.7})
+        output = chat(model='nova', messages=chat_history, format=waifu_schema, options={"temperature": 0.7})
     try:
         response_data = json.loads(output.message.content)
         print(f"AI : {response_data}")
