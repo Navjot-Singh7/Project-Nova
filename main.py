@@ -27,6 +27,7 @@ from transformers import AutoProcessor, AutoModelForVision2Seq
 from transformers.image_utils import load_image
 import cv2
 import gc
+import pyscreenshot
 warnings.filterwarnings("ignore")
 import logging
 logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
@@ -407,7 +408,7 @@ def get_response(user_input):
         chat_history.append({"role": "user", "content": contextual_input})
     elif vision_description:
         vision_input = (
-            f"--- This is the visual details you are seeing right now, please use this information in your response ---\n"
+            f"--- THIS IS THE VISUAL DETAILS YOU ARE SEEING RIGHT NOW, PLEASE USE THIS INFORMATION IN YOUR RESPONSE ---\n"
             f"---------------------\n"
             f"{vision_description}\n"
             f"---------------------\n"
@@ -603,9 +604,10 @@ def start_tts(text, emotion):
 def start_vision(user_input):
     global vision_model
     vision_triggers = ["look at", "what do you see", "can you see", "see this", "check out", "checkout", "seeing"]
+    screen_share_triggers = ["on screen","on my screen", "what's on my screen", "what is on my screen", "what do you see on my screen", "what do you see on the screen", "see my screen", "see the screen", "what's going on my screen","look at my screen", "look at the screen", "check out my screen", "check out the screen", "checkout my screen"]
     voice_lines = [
     {"text": "Hold on, let me put my glasses on so I can see you clearly!", "emotion": "cute_playful"},
-    {"text": "Ooh, are you showing me something? Give me a second to focus my eyes!", "emotion": "cute_playful"},
+    {"text": "Ooh, are you showing me something? Give me a second to focus my eyes!", "emotion": "excited"},
     {"text": "Stay right there, don't move! I’m opening my camera feed now.", "emotion": "excited"},
     {"text": "One moment... I need to concentrate to see what's in front of me.", "emotion": "neutral"},
     {"text": "Wait, let me fix my hair... okay, just kidding! Scanning now.", "emotion": "cute_playful"},
@@ -617,7 +619,7 @@ def start_vision(user_input):
     {"text": "You want my opinion? Alright, let me get a good look at you first.", "emotion": "flirty"},
     {"text": "Scanning... I hope you're showing me something cool!", "emotion": "excited"},
     {"text": "Checking the scene... hmmm, let's see what you're up to today.", "emotion": "cute_playful"},
-    {"text": "Wait, let me clear my cache—okay, eyes are open. What have we got here?", "emotion": "cute_playful"},
+    {"text": "Wait, let me clear my cache—okay, eyes are open. What have we got here?", "emotion": "excited"},
     {"text": "Got it. Let me take a look real quick.", "emotion": "excited"},
     {"text": "Scanning now... stay still.", "emotion": "neutral"},
     {"text": "Opening my eyes... one second.", "emotion": "neutral"},
@@ -625,7 +627,7 @@ def start_vision(user_input):
     {"text": "Let me see... hold that thought!", "emotion": "cute_playful"}
 ]
 
-    if any(trigger in user_input.lower() for trigger in vision_triggers):
+    if any(trigger in user_input.lower() and not "my screen" in user_input.lower() for trigger in vision_triggers):
         voice_line = random.choice(voice_lines)
         threading.Thread(target=start_tts, args=(voice_line["text"], voice_line["emotion"]), daemon=True).start()
         vision_model.to(DEVICE)
@@ -644,6 +646,29 @@ def start_vision(user_input):
             inputs = inputs.to(DEVICE)
             
             generated_ids = vision_model.generate(**inputs, max_new_tokens=110, do_sample=False, repetition_penalty=1.1)
+            generated_texts = processor.batch_decode(
+                                    generated_ids,
+                         skip_special_tokens=True,)
+            vision_model.to("cpu")
+            torch.cuda.empty_cache()
+            gc.collect()
+            return generated_texts[0].split("Assistant:")[1]
+        else:
+            print("Failed to capture image.")
+
+    elif any(trigger in user_input.lower() for trigger in screen_share_triggers):
+        voice_line = random.choice(voice_lines)
+        threading.Thread(target=start_tts, args=(voice_line["text"], voice_line["emotion"]), daemon=True).start()
+        vision_model.to(DEVICE)
+        image = pyscreenshot.grab()
+
+        if image:
+            prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
+            
+            inputs = processor(text=prompt, images=[image], return_tensors="pt")
+            inputs = inputs.to(DEVICE)
+            
+            generated_ids = vision_model.generate(**inputs, max_new_tokens=125, do_sample=False, repetition_penalty=1.1)
             generated_texts = processor.batch_decode(
                                     generated_ids,
                          skip_special_tokens=True,)

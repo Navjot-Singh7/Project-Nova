@@ -7,6 +7,13 @@ It combines a fine-tuned large language model, long-term memory, expressive text
 
 ---
 >### 🔔 Updates
+>### v0.4 — Nova Vision update (Latest)
+> - Nova's vision capabilities have been upgraded from simple webcam support to full Environment Awareness. She can now also see your screen.
+> - New **Look** Capabilities:
+>   - **Contextual Screen Capture:** Nova doesn't waste resources by recording. Instead, she captures a snapshot only when you ask: "Nova, checkout my screen!" or "What's on my screen?.
+>   - **Dual-Source Input:** Seamlessly switch between the Webcam (to see your face/emotions) and the Screen (to see your games, code, or art).
+>   - **Hardware Optimized:** Designed to run alongside high-end games without causing FPS drops.
+
 >### v0.3 — Nova V2 (Latest)
 > - Nova's model has been completely re-trained from the ground up to be more stable, expressive, and structurally sound.
 > - While V1 was successfully fine-tuned to repond in JSON format, it required a System Prompt to guide the model for that behavior. V2 has been deeply trained (455 steps, 0.39 loss) to make JSON and the personality its native language. It now understands the JSON structure at a foundational level, making it more **'alive,'** and **'emotionally expressive'**.
