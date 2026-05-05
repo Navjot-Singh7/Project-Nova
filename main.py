@@ -686,7 +686,7 @@ def record_audio():
         recognizer.adjust_for_ambient_noise(source)
         print("Listening...")
 
-        while keyboard.is_pressed("shift"):
+        if keyboard.is_pressed("shift"):
             try:
                 audio_data = recognizer.listen(source)
                 record = True
