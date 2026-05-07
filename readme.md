@@ -11,6 +11,7 @@ It combines a fine-tuned large language model, long-term memory, expressive text
 >### v0.5 — Nova Web UI update (Latest)
 > - A simple, clean web interface for **Nova** - your local AI companion.
 > ### Features
+> - Run web_ui.py if you want to use Web UI, otherwise run main.py if you want to use Nova via Terminal
 > - **Text Chat**  - Type your messages
 > - **Voice Input** - Toggle mic button , speak naturally
 > - **Real Time Responses** - Nova replies with emotion and memory
