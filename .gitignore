@@ -25,6 +25,6 @@ model_listener.py
 speech.py
 text_to_speech.py
 vision.py
-
+new_stt.py
 #models/
 *.mf
