@@ -2,7 +2,7 @@ import os
 import gradio as gr
 import warnings
 import time
-from faster_whisper import WhisperModel
+from transformers import pipeline
 import speech_recognition as sr
 from main import get_response , start_tts
 import json
@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="gradio")
 
 recognizer = sr.Recognizer()
 mic = sr.Microphone()
-model = WhisperModel("small", device="cuda", compute_type="float16")
+transcriber = pipeline("automatic-speech-recognition", model="UsefulSensors/moonshine-base", device=0)
 
 css = """
 #mic-button {
@@ -139,13 +139,9 @@ with gr.Blocks(title="Nova") as demo:
                 return "No Audio Captured, Please try Again."
         
         def transcribe_audio():
-            segments, info = model.transcribe("temp_audio.wav", beam_size=5)
-            segments = list(segments) 
             try:
-                if segments[0].text != "":
-                    return segments[0].text
-                else:
-                    return "No speech detected. Please try again."
+                result = transcriber("temp_audio.wav")
+                return result['text']
             except Exception as e:
                 print("No audio captured.")
                 return "Error occurred while transcribing audio. Please try again."

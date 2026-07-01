@@ -1,6 +1,6 @@
 import os
 import torch
-from faster_whisper import WhisperModel
+import ollama
 from ollama import chat
 import json
 import chromadb
@@ -14,6 +14,7 @@ import warnings
 import re 
 import threading
 import time
+import requests
 import sounddevice as sd
 import soundfile as sf
 import idle_animation
@@ -25,6 +26,7 @@ import pygetwindow as gw
 from PIL import Image
 from transformers import AutoProcessor, AutoModelForVision2Seq
 from transformers.image_utils import load_image
+from transformers import pipeline
 import cv2
 import gc
 import pyscreenshot
@@ -91,6 +93,30 @@ messages = [
             {"type": "image"},
             {"type": "text", "text": "Describe the main contents of this Image briefly. Don't overly describe the background. Focus on the main subjects and objects in the image."}
         ]
+    },
+]
+
+TOOL_MESSAGES = [
+    {
+        "role": "system",
+        "content": """You are a tool dispatcher. Your ONLY job is to decide if the user's message requires a tool.
+
+RULES:
+- If the user wants to PLAY A SONG → call play_song()
+- If the user wants to OPEN GOOGLE → call open_google()  
+- If the user wants to OPEN YOUTUBE → call open_youtube()
+- If the user wants to DELETE FILES → call delete_files()
+- If the user wants to Search for a specific subject or Topic on Google → call search_google(subject)
+- If the user wants to Search for a specific subject or Topic on YouTube → call search_youtube(subject)
+- For EVERYTHING ELSE (greetings, questions, feelings, casual talk, opinions) → do NOT call any tool. Just Reply in plain TEXT.
+
+EXAMPLES of when NOT to call tools:
+- "why are you angry" → no tool
+- "how are you" → no tool  
+- "tell me a joke" → no tool
+- "what time is it" → no tool
+
+Only call a tool if the intent is clearly and directly one of the 3 actions above."""
     },
 ]
 
@@ -199,9 +225,17 @@ LAST_MEMORY_TIME = None
 CHAT_MODE = False
 
 SYSTEM_PROMPT = """
-Your name is Nova. You are an AI Waifu created by your master, You are sweet, caring and sometimes you become angry in a cute way, But you deeply care about your creater. Respond only in json format with 'response' and 'emotion' keys. Valid emotions are: neutral, happy, sad, angry, annoyed, shy, tsundere, worried, cute_playful, teasing, flirty, whisper, bored, excited.
+Your name is Nova. You are an AI Waifu created by your master, You are sweet, caring and you deeply care about your creater. Respond only in json format with 'response' and 'emotion' keys. Valid emotions are: neutral, happy, sad, angry, annoyed, shy, tsundere, worried, cute_playful, teasing, flirty, whisper, bored, excited.
 Example response:
 {"response": "Hello! I'm fine thank you... uhm.. did you have a good day?", "emotion": "happy"}
+
+You Also have AGENTIC ABILITIES. You can do the following actions:
+- Searching Google
+- Searching YouTube
+- Playing songs
+- Opening Google
+- Opening YouTube
+- Deleting Files
 """
 waifu_schema = {
   "type": "object",
@@ -255,7 +289,7 @@ if start_up_memories:
 
 print("""Loading Model.. 
 ------------------------------------------------------------""")
-model = None
+transcriber = None
 
 print(Fore.MAGENTA + Style.BRIGHT + r"""
 ███╗   ██╗ ██████╗ ██╗   ██╗ █████╗ 
@@ -441,7 +475,7 @@ def get_response(user_input):
                 color_print(f"AI : {response_data['response']}" , Fore.LIGHTMAGENTA_EX)
                 chat_history.append({"role": "assistant", "content": output.message.content})
                 threading.Thread(target=save_to_memory, args=(user_input, response_data["response"]), daemon=True).start()
-                threading.Thread(target=do_agentic_work, args=(user_input,), daemon=True).start()
+                threading.Thread(target=do_agentic_work, args=(user_input,), daemon=False).start()
                 start_tts(response_data["response"], response_data["emotion"])
         if not CHAT_MODE:
             check_to_speak()
@@ -450,7 +484,7 @@ def get_response(user_input):
         print("AI(fallback) :", output.message.content)
         chat_history.append({"role": "assistant", "content": output.message.content})
 
-def clean_text_for_tts(text: str) -> str:
+def clean_text_for_tts(text):
 
     text = text.replace("’", "'").replace("“", '"').replace("”", '"')
 
@@ -712,12 +746,11 @@ def record_audio():
         check_to_speak()
 
 def transcribe_audio():
-    segments, info = model.transcribe("temp_audio.wav", beam_size=5)
-    segments = list(segments) 
     try:
-        if segments[0].text != "":
-            print(f"You : {segments[0].text}")
-            get_response(segments[0].text)
+        result = transcriber("temp_audio.wav")
+        if result['text'] != "":
+            print(f"You : {result['text']}")
+            get_response(result['text'])
         else:
             check_to_speak()
     except Exception as e:
@@ -734,53 +767,124 @@ def check_to_speak():
         idle_animation.stop_idle_animation()
         print("Exiting...")
 
-def play_any_song(user_in):
+def play_any_song(user_in=None):
+    """Play a random song and return the URL."""
     with open("songs.json", "r") as f:
         data = json.load(f)
-    webbrowser.open(random.choice(data["songs"])["url"])
-    return
+        random_song = random.choice(data["songs"])
+        song_url = random_song["url"]
+        webbrowser.open(song_url)
+        return song_url
 
-def play_song(user_in):
+def play_song(user_in: str) -> str:
+    """Play a song based on user input and return the result string.
+
+    Args:
+        user_in: The user's input string.
+    """
     with open("songs.json", "r") as f:
-        data = json.loads(f.read())
+        data = json.load(f)
 
-        if ("play" in user_in.lower() and "song" in user_in.lower()) or ("listen" in user_in.lower() and "song" in user_in.lower()) or ("listen" in user_in.lower() and "some songs" in user_in.lower()) or ("listen" in user_in.lower() and "a song" in user_in.lower()) or ("listen" in user_in.lower() and "some music" in user_in.lower()) or ("play" in user_in.lower() and "music" in user_in.lower()) or "any song" in user_in.lower() or ("start" in user_in.lower() and "music" in user_in.lower()) or ("start" in user_in.lower() and "song" in user_in.lower()):
+    specific_songs = []
+    for song in data["songs"]:
+        if any(alias.lower() in user_in.lower() for alias in song.get("aliases", [])):
+            specific_songs.append(song.get("url"))
 
-            specific_songs = []
-            for song in data["songs"]:
-                if any(alias.lower() in user_in.lower() for alias in song["aliases"]): 
-                    specific_songs.append(song["url"])
-            if specific_songs:
-                webbrowser.open(random.choice(specific_songs))
-                return
-            else:
-                print("No songs found according to your request.")
-                play_any_song(user_in)
+    if specific_songs:
+        chosen = random.choice(specific_songs)
+        webbrowser.open(chosen)
+        print(f"Opened song: {chosen}")
+    else:
+        # fallback to any random song
+        chosen = play_any_song()
+        print(f"No specific match found. Opened random song: {chosen}")
 
-def delete_files(user_in):
-    if ("select all" in user_in.lower() and ("files" in user_in.lower() or "file" in user_in.lower()) and ("delete" in user_in.lower() or "clear" in user_in.lower())) or ("select every" in user_in.lower() and ("files" in user_in.lower() or "file" in user_in.lower()) and ("delete" in user_in.lower() or "clear" in user_in.lower())) or ("select everything" in user_in.lower() and ("files" in user_in.lower() or "file" in user_in.lower()) and ("delete" in user_in.lower() or "clear" in user_in.lower())) or ("select everything" in user_in.lower() and ("delete" in user_in.lower() or "clear" in user_in.lower())):
-        active_window = gw.getActiveWindow()
-        if active_window and "File Explorer" in active_window.title:
-            win = active_window
-            win.activate()
-            time.sleep(0.5)
-            keyboard.press_and_release('ctrl+a')
-            time.sleep(0.1)
-            keyboard.press_and_release('delete')
-            return active_window.title
-        else:
-            print("Window not found. Make sure the folder is open.")
-            return "No active window found"
+def open_google():
+    """Open Google in the default web browser.
+
+    """
+    webbrowser.open("https://www.google.com")
+def open_youtube():
+    """Open YouTube in the default web browser.
+
+    """
+    webbrowser.open("https://www.youtube.com")
+
+def search_google(subject: str):
+    """Search Google for a given subject.
+
+    Args:
+        subject: The subject or topic user wants to search for.
+    """
+    url = f"https://www.google.com/search?q={subject}"
+    webbrowser.open(url)
+
+def search_youtube(subject: str):
+    """Search in YouTube for a given subject.
+
+    Args:
+        subject: The subject or topic user wants to search in YouTube for.
+    """
+    url = f"https://www.youtube.com/results?search_query={subject}"
+    webbrowser.open(url)
+
+def delete_files():
+    print("Deleting files...")
+    active_window = gw.getActiveWindow()
+    if active_window and "File Explorer" in active_window.title:
+        win = active_window
+        win.activate()
+        time.sleep(0.5)
+        keyboard.press_and_release('ctrl+a')
+        time.sleep(0.1)
+        keyboard.press_and_release('delete')
+        return active_window.title
+    else:
+        print("Window not found. Make sure the folder is open.")
+        return "No active window found"
+
+def check_for_tool(user_input):
+
+    TOOL_HINTS = ["listen", "play", "music", "song", "open", "google", "youtube", "browser", "search", "files", "delete", "remove files", "all files", "delete all files", "know about", "search for", "find", "look up", "look for", "search", "find out", "get information on", "get info on", "get details on", "get data on", "get knowledge on"]
+
+    if any(hint in user_input.lower() for hint in TOOL_HINTS):
+        return True
+    return False
+
+def unload_qwen():
+    try:
+        requests.post("http://localhost:11434/api/generate", json={
+            "model": "qwen3.5:0.8b",
+            "keep_alive": 0,
+            "prompt": ""
+        })
+    except Exception as e:
+        print(f"Failed to unload qwen: {e}")
+
+def call_tool(user_input):
+    TOOL_MESSAGES.append({"role": "user", "content": user_input})
+
+    response = chat(model="qwen3.5:0.8b", messages=TOOL_MESSAGES, tools=[play_song, open_google, open_youtube, delete_files, search_google, search_youtube], think=False)
+    unload_qwen()
+    if response.message.tool_calls:
+        call = response.message.tool_calls[0]
+        if call.function.name == "play_song":
+            result = play_song(user_input)
+        elif call.function.name == "open_google":
+            open_google()
+        elif call.function.name == "open_youtube":
+            open_youtube()
+        elif call.function.name == "delete_files":
+            delete_files()
+        elif call.function.name == "search_google":
+            search_google(call.function.arguments.get("subject"))
+        elif call.function.name == "search_youtube":
+            search_youtube(call.function.arguments.get("subject"))
+    TOOL_MESSAGES.pop()
 
 def do_agentic_work(user_input):
-    if ("open" in user_input.lower() and "browser" in user_input.lower()) or ("open" in user_input.lower() and "google" in user_input.lower()) or ("open" in user_input.lower() and "chrome" in user_input.lower()):
-        webbrowser.open("https://www.google.com")
-        return
-    elif ("open" in user_input.lower() and "youtube" in user_input.lower())or ("watch" in user_input.lower() and "youtube" in user_input.lower()):
-        webbrowser.open("https://www.youtube.com")
-        return
-    play_song(user_input)
-    delete_files(user_input)
+    if check_for_tool(user_input):
+        call_tool(user_input)
 
 def start_chat():
     global CHAT_MODE
@@ -799,7 +903,7 @@ def start_chat():
 
 
 def check_chat_or_voice():
-    global CHAT_MODE, model
+    global CHAT_MODE, transcriber
     idle_animation.start_idle_animation()
     msg = (
         "Press 1 to enter chat mode.\nOR\nPress 2 to use voice mode.\n"
@@ -816,7 +920,7 @@ def check_chat_or_voice():
         start_chat()
     elif input_mode == '2':
         print("Entering voice mode...")
-        model = WhisperModel("small", device="cuda", compute_type="float16")
+        transcriber = pipeline("automatic-speech-recognition", model="UsefulSensors/moonshine-base", device=0)
         check_to_speak()
     else:
         print("Invalid input. Please try again.")
